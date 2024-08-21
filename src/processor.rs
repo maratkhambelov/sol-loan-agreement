@@ -50,7 +50,6 @@ pub fn add_item(
     //TODO: добавить валидации
     let account_len: usize = 1000;
 
-
     let rent = Rent::get()?;
     let rent_lamports = rent.minimum_balance(account_len);
 
@@ -92,6 +91,18 @@ pub fn sign_contract(
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
 
+    let borrower_account = next_account_info(account_info_iter)?;
+    let lender_account = next_account_info(account_info_iter)?;
+    let item_contract_account = next_account_info(account_info_iter)?;
+    let escrow_account = next_account_info(account_info_iter)?;
+    let account_account = next_account_info(account_info_iter)?;
+    let rent = &Rent::from_account_info(next_account_info(account_info_iter)?)?;
+    let token_program = next_account_info(account_info_iter)?;
+    let system_program_account = next_account_info(account_info_iter)?;
+
+    if !rent.is_exempt(borrower_account.lamports(), borrower_account.data_len()) {
+    }
+
 
 
     Ok(())
@@ -102,6 +113,15 @@ pub fn complete_contract(
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
 
+    let lender_account = next_account_info(account_info_iter)?;
+
+    let item_contract_account = next_account_info(account_info_iter)?;
+    let borrower_account = next_account_info(account_info_iter)?;
+    let contract_account = next_account_info(account_info_iter)?;
+    let escrow_account = next_account_info(account_info_iter)?;
+    let borrower_account = next_account_info(account_info_iter)?;
+    let token_program_account = next_account_info(account_info_iter)?;
+
     todo!();
     Ok(())
 }
@@ -110,6 +130,14 @@ pub fn terminate_contract(
     accounts: &[AccountInfo],
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
+
+    let lender_account = next_account_info(account_info_iter)?;
+
+    let item_contract_account = next_account_info(account_info_iter)?;
+    let contract_account = next_account_info(account_info_iter)?;
+    let escrow_account = next_account_info(account_info_iter)?;
+    let borrower_account = next_account_info(account_info_iter)?;
+    let token_program_account = next_account_info(account_info_iter)?;
 
     todo!();
     Ok(())
