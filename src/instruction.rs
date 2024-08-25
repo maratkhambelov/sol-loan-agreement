@@ -9,7 +9,7 @@ pub enum LoanInstruction {
     ///
     /// - `[signer]` `borrower account`: Аккаунт владельца предмета.
     /// - `[writable]` `item_contract_account`: Аккаунт, содержащий информацию о предмете залога (`ContractItemState`).
-    /// - `[]` `system program account`: Аккаунт системной программы для создания и управления аккаунтами (SystemProgram::ID).
+    /// - `[]` `system_program`: Аккаунт системной программы для создания и управления аккаунтами (SystemProgram::ID).
     AddItem {
         name: String,
     },
@@ -18,40 +18,45 @@ pub enum LoanInstruction {
     ///
     /// Accounts expected:
     ///
-    /// - `[signer]` `borrower account`: Аккаунт заемщика, подписывающего договор.
-    /// - `[]` `lender account`: Аккаунт кредитора, предоставляющего средства или предмет залога.
+    /// - `[signer]` `borrower_account`: Аккаунт заемщика, подписывающего договор.
+    /// - `[writable]` `account contract`: Аккаунт, содержащий основной контракт (`LoanContractState`).
+    /// - `[]` `lender_account`: Аккаунт кредитора, предоставляющего средства или предмет залога.
     /// - `[writable]` `item_contract_account`: Аккаунт, содержащий информацию о предмете залога (`ContractItemState`).
     /// - `[writable]` `escrow_account`: Временный аккаунт для хранения депозита или других активов до выполнения условий контракта.
-    /// - `[writable]` `account contract`: Аккаунт, содержащий основной контракт (`LoanContractState`).
-    /// - `[]` `rent sysvar account`: Системный аккаунт для расчета платы за аренду (SYSVAR_RENT_PUBKEY).
     /// - `[]` `token program account`: Аккаунт программы токенов SPL для выполнения операций с токенами (TOKEN_PROGRAM_ID).
-    /// - `[]` `system program account`: Аккаунт системной программы для создания и управления аккаунтами (SystemProgram::ID).
+    /// - `[]` `system_program`: Аккаунт системной программы для создания и управления аккаунтами (SystemProgram::ID).
     SignContract {
         deposit: u64,
     },
+    /// excluded:
+    /// - `[]` `rent sysvar account`: Системный аккаунт для расчета платы за аренду (SYSVAR_RENT_PUBKEY).
+
     /// `CompleteContract` используется для завершения контракта после выполнения всех условий.
     ///   Деньги, хранящиеся на `temp_account`, возвращаются обратно заемщику (`borrower account`).
-    ///
+    /// excluded:
+    ///  - `[]` `borrower account`: (ЗАЧЕМ НУЖЕН? - используем ключ из контракта) Аккаунт заемщика, которому будут возвращены средства.
+    /// - `[writable]` `escrow_account`: Временный аккаунт для хранения депозита, из которого средства будут возвращены заемщику.
     /// Accounts expected:
     ///
     /// - `[signer]` `lender account`: Аккаунт владельца предмета.
-    /// - `[writable]` `item_contract_account`: Аккаунт, содержащий информацию о предмете залога (`ContractItemState`).
     /// - `[writable]` `contract_account`: Аккаунт, содержащий основной контракт (`LoanContractState`).
-    /// - `[writable]` `escrow_account`: Временный аккаунт для хранения депозита, из которого средства будут возвращены заемщику.
-    /// - `[]` `borrower account`: Аккаунт заемщика, которому будут возвращены средства.
+    /// - `[writable]` `item_contract_account`: Аккаунт, содержащий информацию о предмете залога (`ContractItemState`).
     /// - `[]` `token program account`: Аккаунт программы токенов SPL для выполнения операций с токенами (TOKEN_PROGRAM_ID).
+    /// - `[]` `system_program`: Аккаунт системной программы для создания и управления аккаунтами (SystemProgram::ID).
     CompleteContract {},
+
     /// `TerminateContract` используется для досрочного расторжения контракта.
     ///   Деньги, хранящиеся на `temp_account`, возвращаются кредитору (`lender account`) в случае нарушения условий.
-    ///
+    /// excluded:
+    /// - `[]` `system program account`: (?) НУЖЕН ЛИ? Аккаунт системной программы для создания и управления аккаунтами (SystemProgram::ID).
+    /// - `[writable]` `escrow_account`: Временный аккаунт для хранения депозита, из которого средства будут возвращены заемщику.
     /// Accounts expected:
     ///
     /// - `[signer]` `lender account`: Аккаунт владельца предмета.
-    /// - `[writable]` `item_contract_account`: Аккаунт, содержащий информацию о предмете залога (`ContractItemState`).
     /// - `[writable]` `contract_account`: Аккаунт, содержащий основной контракт (`LoanContractState`).
-    /// - `[writable]` `escrow_account`: Временный аккаунт для хранения депозита, из которого средства будут возвращены заемщику.
+    /// - `[writable]` `item_contract_account`: Аккаунт, содержащий информацию о предмете залога (`ContractItemState`).
     /// - `[]` `token program account`: Аккаунт программы токенов SPL для выполнения операций с токенами (TOKEN_PROGRAM_ID).
-    /// - `[]` `system program account`: (?) НУЖЕН ЛИ? Аккаунт системной программы для создания и управления аккаунтами (SystemProgram::ID).
+    /// - `[]` `system_program`: Аккаунт системной программы для создания и управления аккаунтами (SystemProgram::ID).
     TerminateContract {},
 }
 

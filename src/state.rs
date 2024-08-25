@@ -12,12 +12,13 @@ pub enum ContractStatus {
 }
 
 
+//TODO: add counter для того, чтобы заключать множество контрактов
 #[derive(BorshSerialize, BorshDeserialize)]
 pub struct LoanContractState {
     pub lender: Pubkey,
     pub borrower: Pubkey,
     pub item: Pubkey,
-    pub temp_account: Pubkey,
+    pub escrow_account: Pubkey,
     pub expected_amount: u64,
     pub status: u64,
 }
